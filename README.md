@@ -5,7 +5,7 @@ This repository contains a custom Gymnasium (formerly OpenAI Gym) environment fo
 ## Features
 
 * **State Representation with MagicCube library:** The cube's state is represented as a 1D NumPy array of integers, where each integer corresponds to the color of a specific sticker (0-5).
-* **Discrete Action Space:** Supports 12 fundamental Rubik's Cube rotations (6 faces, clockwise and counter-clockwise).
+* **Discrete Action Space:** Supports all the possible Rubik's Cube rotations (including clockwise and counter-clockwise).
 * **Reward Function:** Provides a large positive reward upon solving the cube and a small negative reward for each step taken, encouraging efficient solutions.
 * **Random Scrambling:** The environment can be initialized with a randomly scrambled cube, allowing for diverse starting conditions for learning and testing.
 * **Text-Based Rendering:** Offers a simple `ansi` (ASCII art) rendering mode to visualize the cube's state in the console.
