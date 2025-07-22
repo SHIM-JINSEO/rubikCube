@@ -60,3 +60,31 @@ Here's how you can use the Rubik's Cube environment in your Python code:
     
     env.close()
 ```
+
+## Moves of cube
+For NxN rubik's cube, moves can be classified into three types
+### Outer Layer Moves(Basic moves of 6 face)
+- F, F', F2 (Front face)
+- B, B', B2 (Back face)
+- U, U', U2 (Up face)
+- D, D', D2 (Down face)
+- L, L', L2 (Left face)
+- R, R', R2 (Right face)
+### Wide moves
+It means **rotate  external_layer~x at the same time**.
+It is depend on size(called N) of cube. Suppose x is loacation of layer starting from external layer(current layer).
+If N is even, 1 < x <= N/2 and if N is odd, 1 < x <= (N+1)/2
+- x Fw, x Fw', x Fw2
+- x Bw, x Bw', x Bw2 
+- x Uw, x Uw', x Uw2 
+- x Dw, x Dw', x Dw2 
+- x Lw, x Lw', x Lw2 
+- x Rw, x Rw', x Rw2
+### Single Slice Moves
+It means rotate a one internal layer. 1 < x < N
+- x F, x F', x F2 
+- x B, x B', x B2 
+- x U, x U', x U2 
+- x D, x D', x D2 
+- x L, x L', x L2 
+- x R, x R', x R2
