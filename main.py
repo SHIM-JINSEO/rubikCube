@@ -15,13 +15,9 @@ class RubiksCubeEnv(gym.Env):
 
         # define action space: rotation of magiccube
         # ex: R, U, F, L, D, B, R', U', F', L', D', B', R2, U2, F2, L2, D2, B2
-        self.actions = [
-            "R", "U", "F", "L", "D", "B",
-            "R'", "U'", "F'", "L'", "D'", "B'",
-            "R2", "U2", "F2", "L2", "D2", "B2"
-        ]
-        self.action_space = spaces.Discrete(len(self.actions))
 
+        self.actions = self._possible_actions()
+        self.action_space = spaces.Discrete(len(self.actions))
     
         # Y=0, R=1, G=2, O=3, B=4, W=5
         num_stickers = 6 * (self.cube_size ** 2)
@@ -29,6 +25,48 @@ class RubiksCubeEnv(gym.Env):
 
         self.current_step = 0
 
+    def _possible_actions(self):
+        n = self.cube_size
+
+        # define basic moves for outer layer
+        outer_layer_moves = [
+            "R", "U", "F", "L", "D", "B",
+            "R'", "U'", "F'", "L'", "D'", "B'",
+            "R2", "U2", "F2", "L2", "D2", "B2"
+        ]
+
+        # define wide moves
+        basic_wide_moves = [
+            "Rw", "Uw", "Fw", "Lw", "Dw", "Bw",
+            "Rw'", "Uw'", "Fw'", "Lw'", "Dw'", "Bw'",
+            "Rw2", "Uw2", "Fw2", "Lw2", "Dw2", "Bw2"
+        ]
+        
+        total_wide_moves = []
+        for i in range(2, (n+1)//2 + 1):
+            # even: 1 < x <= n/2, odd: 1 < x <= (n+1)/2
+            wide_moves = [str(i) + move for move in basic_wide_moves]
+            total_wide_moves.extend(wide_moves)
+
+        # define single slice moves
+        basic_slice_moves = [
+            "F", "F'", "F2",
+            "B", "B'", "B2",
+            "R", "R'", "R2",
+            "L", "L'", "L2",
+            "U", "U'", "U2",
+            "D", "D'", "D2"
+        ]
+        total_slice_moves = []
+        for i in range(2, n):
+            # single slice moves: 1 < x < n
+            slice_moves = [str(i) + move for move in basic_slice_moves]
+            total_slice_moves.extend(slice_moves)
+    
+        actions = outer_layer_moves + total_wide_moves
+
+        return actions
+    
     def _get_obs(self):
         color_map = {'Y': 0, 'R': 1, 'G': 2, 'O': 3, 'B': 4, 'W': 5}
         flat_state_str = self.cube.get()
