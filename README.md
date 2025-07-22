@@ -29,10 +29,8 @@ This repository contains a custom Gymnasium (formerly OpenAI Gym) environment fo
 Here's how you can use the Rubik's Cube environment in your Python code:
 
 ```python
-    import gymnasium as gym
-    from gymnasium import spaces
-    import numpy as np
-    import magiccube
+    # /test.py
+    from main import RubiksCubeEnv
     env = RubiksCubeEnv(cube_size=3, max_steps=500, scramble_depth=15) 
 
     observation, info = env.reset()
