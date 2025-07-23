@@ -1,6 +1,6 @@
 # Rubik's Cube Gymnasium Environment
 
-This repository contains a custom Gymnasium (formerly OpenAI Gym) environment for the Rubik's Cube, designed for testing Reinforcement Learning (RL) agents and various cube-solving algorithms. The environment uses Magiccube library for the cube's state, providing a straightforward interface.
+This repository contains a custom Gymnasium (formerly OpenAI Gym) environment for the Rubik's Cube, designed for testing AI agents and various cube-solving algorithms. The environment uses Magiccube library for the cube's state, providing a straightforward interface.
 
 ## Features
 
