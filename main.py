@@ -109,7 +109,7 @@ if __name__ == "__main__":
 
     for _ in range(env.max_steps):
         # select random action (it will be replaced with a real agent later)
-        action = env.actions.random.choice()
+        action = np.random.choice(env.actions)
         state, terminated, truncated = env.apply_action(action)
         
         print(f"\nStep {env.current_step}: Action={action}")
