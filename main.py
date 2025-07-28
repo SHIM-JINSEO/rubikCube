@@ -36,17 +36,17 @@ class RubiksCubeEnv(gym.Env):
         ]
 
         # define wide moves
-        basic_wide_moves = [
-            "Rw", "Uw", "Fw", "Lw", "Dw", "Bw",
-            "Rw'", "Uw'", "Fw'", "Lw'", "Dw'", "Bw'",
-            "Rw2", "Uw2", "Fw2", "Lw2", "Dw2", "Bw2"
-        ]
+        # basic_wide_moves = [
+        #     "Rw", "Uw", "Fw", "Lw", "Dw", "Bw",
+        #     "Rw'", "Uw'", "Fw'", "Lw'", "Dw'", "Bw'",
+        #     "Rw2", "Uw2", "Fw2", "Lw2", "Dw2", "Bw2"
+        # ]
         
-        total_wide_moves = []
-        for i in range(2, (n+1)//2 + 1):
-            # even: 1 < x <= n/2, odd: 1 < x <= (n+1)/2
-            wide_moves = [str(i) + move for move in basic_wide_moves]
-            total_wide_moves.extend(wide_moves)
+        # total_wide_moves = []
+        # for i in range(2, (n+1)//2 + 1):
+        #     # even: 1 < x <= n/2, odd: 1 < x <= (n+1)/2
+        #     wide_moves = [str(i) + move for move in basic_wide_moves]
+        #     total_wide_moves.extend(wide_moves)
 
         # define single slice moves
         basic_slice_moves = [
@@ -63,7 +63,7 @@ class RubiksCubeEnv(gym.Env):
             slice_moves = [str(i) + move for move in basic_slice_moves]
             total_slice_moves.extend(slice_moves)
     
-        actions = outer_layer_moves + total_wide_moves
+        actions = outer_layer_moves + total_slice_moves
 
         return actions
     
