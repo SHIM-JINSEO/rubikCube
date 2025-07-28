@@ -1,29 +1,21 @@
-import gymnasium as gym
-from gymnasium import spaces
 import numpy as np
 import magiccube
 
-class RubiksCubeEnv(gym.Env):
+class RubiksCubeEnv():
     metadata = {'render_modes': ['human'], 'render_fps': 4}
 
     def __init__(self, cube_size=3, max_steps=500):
         self.cube_size = cube_size
         self.max_steps = max_steps
         self.cube = magiccube.Cube(self.cube_size)
-
-        # define action space: rotation of magiccube
-        # ex: R, U, F, L, D, B, R', U', F', L', D', B', R2, U2, F2, L2, D2, B2
+        self.state = self.get_state() 
+       
 
         self.actions = self.possible_actions()
 
         self.face_size = self.cube_size ** 2
         num_stickers = 6 * self.face_size
         print(f"Number of stickers: {num_stickers}")
-
-        self.state = np.zeros(num_stickers, dtype=int) # initial state of the cube
-        for i in range(6): # Y=0, R=1, G=2, O=3, B=4, W=5
-            self.state[i*self.face_size:(i+1)*self.face_size] = i # each face has a unique color
-        print(f"Initial cube state: {self.state}")
 
         self.current_step = 0
 
@@ -64,7 +56,7 @@ class RubiksCubeEnv(gym.Env):
 
         return possible_actions
     
-    def get_obs(self):
+    def get_state(self):
         color_map = {'Y': 0, 'R': 1, 'G': 2, 'O': 3, 'B': 4, 'W': 5}
         flat_state_str = self.cube.get()
         obs = np.array([color_map[char] for char in flat_state_str])
@@ -75,13 +67,8 @@ class RubiksCubeEnv(gym.Env):
 
     def reset(self, seed=None):
         self.cube = magiccube.Cube(self.cube_size) # reset the cube to a solved state
-        
-        # scramble the cube randomly
-        scramble_moves = self.cube.scramble(self.scramble_depth)
-        # print(f"Scrambled with: {scramble_moves}") # print scrabble moves for debugging
-
         self.current_step = 0
-        observation = self.get_obs()
+        observation = self.get_state()
         return observation
 
     def apply_action(self, action):
@@ -91,7 +78,7 @@ class RubiksCubeEnv(gym.Env):
         self.cube.rotate(action)
         self.current_step += 1
 
-        observation = self.get_obs()
+        observation = self.get_state()
         terminated = False
         truncated = False
 
@@ -109,7 +96,7 @@ class RubiksCubeEnv(gym.Env):
         pass
 
 if __name__ == "__main__":
-    env = RubiksCubeEnv(cube_size=3, max_steps=500, scramble_depth=15) 
+    env = RubiksCubeEnv(cube_size=3, max_steps=500) 
 
     observation, info = env.reset()
     print("initial cube state:")
