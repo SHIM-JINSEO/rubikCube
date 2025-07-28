@@ -6,8 +6,9 @@ import magiccube
 class RubiksCubeEnv(gym.Env):
     metadata = {'render_modes': ['human'], 'render_fps': 4}
 
-    def __init__(self, cube_size=3):
+    def __init__(self, cube_size=3, max_steps=500):
         self.cube_size = cube_size
+        self.max_steps = max_steps
         self.cube = magiccube.Cube(self.cube_size)
 
         # define action space: rotation of magiccube
@@ -63,7 +64,7 @@ class RubiksCubeEnv(gym.Env):
 
         return possible_actions
     
-    def _get_obs(self):
+    def get_obs(self):
         color_map = {'Y': 0, 'R': 1, 'G': 2, 'O': 3, 'B': 4, 'W': 5}
         flat_state_str = self.cube.get()
         obs = np.array([color_map[char] for char in flat_state_str])
@@ -80,32 +81,26 @@ class RubiksCubeEnv(gym.Env):
         # print(f"Scrambled with: {scramble_moves}") # print scrabble moves for debugging
 
         self.current_step = 0
-        observation = self._get_obs()
-        info = {} #optional information
-        return observation, info
+        observation = self.get_obs()
+        return observation
 
-    def step(self, action):
-        action_str = self.actions[action]
-        self.cube.rotate(action_str)
-
+    def apply_action(self, action):
+        if (not action in self.actions):
+            print(f"It is Invalid action: {action}. Available actions: {self.actions}")
+            return
+        self.cube.rotate(action)
         self.current_step += 1
 
-        observation = self._get_obs()
-        reward = 0
+        observation = self.get_obs()
         terminated = False
         truncated = False
-        info = {} # optional information
 
         if self._is_solved():
-            reward = 1000 # huge reward for solving the cube
             terminated = True
         elif self.current_step >= self.max_steps:
-            reward = -100 # out of time penalty
             truncated = True
-        else:
-            reward = -1 # small penalty for each step taken
 
-        return observation, reward, terminated, truncated, info
+        return observation, terminated, truncated
 
     def render(self):
         print("\n" + str(self.cube))
