@@ -6,36 +6,37 @@ import magiccube
 class RubiksCubeEnv(gym.Env):
     metadata = {'render_modes': ['human'], 'render_fps': 4}
 
-    def __init__(self, cube_size=3, max_steps=100, scramble_depth=10):
-        super().__init__()
+    def __init__(self, cube_size=3):
         self.cube_size = cube_size
         self.cube = magiccube.Cube(self.cube_size)
-        self.max_steps = max_steps
-        self.scramble_depth = scramble_depth # 큐브를 섞을 깊이
 
         # define action space: rotation of magiccube
         # ex: R, U, F, L, D, B, R', U', F', L', D', B', R2, U2, F2, L2, D2, B2
 
-        self.actions = self._possible_actions()
-        self.action_space = spaces.Discrete(len(self.actions))
-    
-        # Y=0, R=1, G=2, O=3, B=4, W=5
-        num_stickers = 6 * (self.cube_size ** 2)
-        self.observation_space = spaces.Box(low=0, high=5, shape=(num_stickers,), dtype=np.int32) 
+        self.actions = self.possible_actions()
+
+        self.face_size = self.cube_size ** 2
+        num_stickers = 6 * self.face_size
+        print(f"Number of stickers: {num_stickers}")
+
+        self.state = np.zeros(num_stickers, dtype=int) # initial state of the cube
+        for i in range(6): # Y=0, R=1, G=2, O=3, B=4, W=5
+            self.state[i*self.face_size:(i+1)*self.face_size] = i # each face has a unique color
+        print(f"Initial cube state: {self.state}")
 
         self.current_step = 0
 
-    def _possible_actions(self):
+    def possible_actions(self):
         n = self.cube_size
 
         # define basic moves for outer layer
         outer_layer_moves = [
             "R", "U", "F", "L", "D", "B",
             "R'", "U'", "F'", "L'", "D'", "B'",
-            "R2", "U2", "F2", "L2", "D2", "B2"
         ]
-
+        
         # define wide moves
+        '''
         # basic_wide_moves = [
         #     "Rw", "Uw", "Fw", "Lw", "Dw", "Bw",
         #     "Rw'", "Uw'", "Fw'", "Lw'", "Dw'", "Bw'",
@@ -47,25 +48,20 @@ class RubiksCubeEnv(gym.Env):
         #     # even: 1 < x <= n/2, odd: 1 < x <= (n+1)/2
         #     wide_moves = [str(i) + move for move in basic_wide_moves]
         #     total_wide_moves.extend(wide_moves)
+        '''
 
         # define single slice moves
-        basic_slice_moves = [
-            "F", "F'", "F2",
-            "B", "B'", "B2",
-            "R", "R'", "R2",
-            "L", "L'", "L2",
-            "U", "U'", "U2",
-            "D", "D'", "D2"
-        ]
         total_slice_moves = []
         for i in range(2, n):
             # single slice moves: 1 < x < n
-            slice_moves = [str(i) + move for move in basic_slice_moves]
+            slice_moves = [str(i) + move for move in outer_layer_moves] # e.g., "2R", "3U", etc.
             total_slice_moves.extend(slice_moves)
     
-        actions = outer_layer_moves + total_slice_moves
+        possible_actions = np.array(outer_layer_moves + total_slice_moves)
 
-        return actions
+        print(f"Possible actions: {possible_actions}")
+
+        return possible_actions
     
     def _get_obs(self):
         color_map = {'Y': 0, 'R': 1, 'G': 2, 'O': 3, 'B': 4, 'W': 5}
@@ -77,7 +73,6 @@ class RubiksCubeEnv(gym.Env):
         return self.cube.is_done()
 
     def reset(self, seed=None):
-        super().reset(seed=seed)
         self.cube = magiccube.Cube(self.cube_size) # reset the cube to a solved state
         
         # scramble the cube randomly
