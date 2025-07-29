@@ -14,8 +14,8 @@ class RubiksCubeEnv():
         self.actions = self.possible_actions()
 
         self.face_size = self.cube_size ** 2
-        num_stickers = 6 * self.face_size
-        print(f"Number of stickers: {num_stickers}")
+        self.num_stickers = 6 * self.face_size
+        print(f"Number of stickers: {self.num_stickers}")
 
         self.current_step = 0
 
@@ -55,6 +55,9 @@ class RubiksCubeEnv():
         print(f"Possible actions: {possible_actions}")
 
         return possible_actions
+    
+    def size(self):
+        return self.cube_size, self. face_size, self.num_stickers
     
     def get_state(self):
         color_map = {'Y': 0, 'R': 1, 'G': 2, 'O': 3, 'B': 4, 'W': 5}
