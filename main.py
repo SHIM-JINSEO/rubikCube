@@ -2,7 +2,6 @@ import numpy as np
 import magiccube
 
 class RubiksCubeEnv():
-    metadata = {'render_modes': ['human'], 'render_fps': 4}
 
     def __init__(self, cube_size=3, max_steps=500):
         self.cube_size = cube_size
