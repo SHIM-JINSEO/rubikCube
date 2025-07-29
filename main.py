@@ -3,20 +3,29 @@ import magiccube
 
 class RubiksCubeEnv():
 
-    def __init__(self, cube_size=3, max_steps=500):
+    def __init__(self, cube_size=3, start_state=None, end_state=None, autoscrambled=True, limit_max_steps=False,):
+        #If auto scramble is true, the initial and goal state are automatically determined
         self.cube_size = cube_size
-        self.max_steps = max_steps
+        self.max_steps = 500
+        self.limit_max_steps = limit_max_steps
         self.cube = magiccube.Cube(self.cube_size)
         self.start_cube = magiccube.Cube(self.cube_size) 
         self.end_cube = magiccube.Cube(self.cube_size)
         
-        self.cube.scramble()
-        self.state = self.get_state()
-        self.start_state = self.state
-        self.start_cube.set(self.start_state)
-
-        self.end_cube.scramble()
-        self.end_state = self.end_cube.get()
+        if autoscrambled:# if autoscrambled is True, the start and end states are randomly generated
+            self.cube.scramble()
+            self.state = self.get_state()
+            self.start_state = self.state
+            self.start_cube.set(self.start_state)
+            self.end_cube.scramble()
+            self.end_state = self.end_cube.get()
+        elif start_state is not None and end_state is not None: # If start_state and end_state are provided, set them directly
+            self.cube.set(start_state)
+            self.start_cube.set(start_state)
+            self.end_cube.set(end_state)
+            self.state = self.get_state()
+            self.start_state = self.get_start_state()
+            self.end_state = self.get_end_state()
 
         self.actions = self.possible_actions()
 
@@ -86,7 +95,7 @@ class RubiksCubeEnv():
 
         if self._is_solved():
             terminated = True
-        elif self.current_step >= self.max_steps:
+        elif self.limit_max_steps and self.current_step >= self.max_steps:
             truncated = True
 
         return state, terminated, truncated
@@ -96,14 +105,30 @@ class RubiksCubeEnv():
 
     def get_start_state(self):
         print("\n" + str(self.start_cube))
-        return self.start_state
+        return self.start_cube.get()
     
     def get_end_state(self):
         print("\n" + str(self.end_cube))
-        return self.end_state
+        return self.end_cube.get()
     
 if __name__ == "__main__":
-    env = RubiksCubeEnv(cube_size=3, max_steps=10) 
+    start_str = (
+    'RRRRRRRRR' +  # F (Front) - R 
+    'WWWWWWWWW' +  # U (Up) - W 
+    'BBBBBBBBB' +  # R (Right) - B 
+    'GGGGGGGGG' +  # L (Left) - G 
+    'OOOOOOOOO' +  # B (Back) - O 
+    'YYYYYYYYY'    # D (Down) - Y 
+    )   
+    end_str = (
+    'RRRRRRWWW' +  # F (Front)
+    'WWWWWWGGG' +  # U (Up) 
+    'BBBBBBBYY' +  # R (Right) 
+    'GGGGGGGOO' +  # L (Left) 
+    'OOOOOOOOO' +  # B (Back) 
+    'BBBBYYYYY'    # D (Down) 
+    )
+    env = RubiksCubeEnv(cube_size=3, start_state=start_str, end_state=end_str, autoscrambled=False, limit_max_steps=True) 
 
     print("\n*******************************************")
     print("start cube state:")
