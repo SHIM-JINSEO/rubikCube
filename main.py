@@ -6,7 +6,7 @@ class RubiksCubeEnv():
     def __init__(self, cube_size=3, start_state=None, end_state=None, autoscrambled=True, limit_max_steps=False,):
         #If auto scramble is true, the initial and goal state are automatically determined
         self.cube_size = cube_size
-        self.max_steps = 500
+        self.max_steps = 200
         self.limit_max_steps = limit_max_steps
         self.cube = magiccube.Cube(self.cube_size)
         self.start_cube = magiccube.Cube(self.cube_size) 
